@@ -3,16 +3,16 @@
 #include <map>
 #include "tstack.h"
 int prior(char ch) {
-    if (ch == '(') {
-        return 1;
-    }
-    if (ch == '+' || ch == '-') {
-        return 2;
-    }
-    if (ch == '*' || ch == '/') {
-        return 3;
-    }
-    return -1;
+if (ch == '(') {
+return 1;
+}
+if (ch == '+' || ch == '-') {
+return 2;
+}
+if (ch == '*' || ch == '/') {
+return 3;
+}
+return -1;
 }
 std::string infx2pstfx(std::string inf) {
     TStack <char, 100> st;
