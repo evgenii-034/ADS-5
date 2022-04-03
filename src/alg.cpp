@@ -1,7 +1,7 @@
 // Copyright 2021 NNTU-CS
 #include <string>
 #include <map>
-#include "tstack.h"
+#include"tstack.h"
 int priority(char ch) {
 if (ch == '(') {
     return 0;
