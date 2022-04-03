@@ -1,120 +1,88 @@
 // Copyright 2021 NNTU-CS
 #include <string>
 #include <map>
-#include"tstack.h"
-int prior(char ch) {
-if (ch == '(') {
-return 1;
-}
-if (ch == '+' || ch == '-') {
-return 2;
-}
-if (ch == '*' || ch == '/') {
-return 3;
-}
-return -1;
+#include "tstack.h"
+int pr(char op) {
+    switch (op) {
+      case '(': return 0;
+      case ')': return 1;
+      case '+': return 2;
+      case '-': return 2;
+      case '*': return 3;
+      case '/': return 3;
+      case ' ': return 4;
+      default: return 5; 
+    }
+  }
+
+int culcul(char op, int a, int b) {
+  switch (op) {
+    case '+': return b + a;
+    case '-': return b - a;
+    case '*': return b * a;
+    case '/': return b / a;
+    case '+': return a + b;
+    case '-': return a - b;
+    case '*': return a * b;
+    case '/': return a / b;
+    default: return 0;
+  }
 }
 std::string infx2pstfx(std::string inf) {
-    TStack <char, 100> st;
-    std::string post;
-    for (int k = 0; k < inf.size(); k++) {
-        int pr = prior(inf[k]);
-        if ((prior(inf[k]) == -1) && (inf[k] != ')')) {
-            if (!post.empty() && prior(inf[k - 1]) != -1) {
-                post.push_back(' ');
-            }
-            post.push_back(inf[k]);
-        } else if ((prior(inf[k]) > prior(st.get()))
-                   || (st.isEmpty()) || (inf[k] == '(')) {
-            st.push(inf[k]);
+  std::string res;
+  TStack <char, 100> sta;
+  for (int i = 0; i < inf.length(); i++) {
+    if (pr(inf[i]) == 5) {
+      res.push_back(inf[i]); 
+      res.push_back(' ');
+    } else {
+        if (pr(inf[i]) == 4) {
+          continue; 
+        } else if (pr(inf[i]) == 0) {
+          sta.push(inf[i]);
+        } else if (pr(inf[i]) > pr(sta.get())) {
+          sta.push(inf[i]);
+        } else if (sta.isEmpty()) {
+          sta.push(inf[i]);
+        } else if (pr(inf[i]) == 1) {
+          while (pr(sta.get()) != 0) { 
+            res.push_back(sta.get());
+            res.push_back(' ');
+            sta.pop(); 
+          }
+          sta.pop();
         } else {
-            if (inf[k] == ')') {
-                while (st.get() != '(') {
-                    post.push_back(' ');
-                    post.push_back(st.get());
-                    st.pop();
-                }
-                st.pop();
-            } else {
-                while (prior(st.get()) >= prior(inf[k])) {
-                    post.push_back(' ');
-                    post.push_back(st.get());
-                    st.pop();
-                }
-                st.push(inf[k]);
+            while (!sta.isEmpty() && (pr(inf[i]) <= pr(sta.get()))) {
+              res.push_back(sta.get());
+              res.push_back(' ');
+              sta.pop();
             }
+            sta.push(inf[i]);
         }
-    }
-    while (!st.isEmpty()) {
-        post.push_back(' ');
-        if (st.get() != '(') {
-            post.push_back(st.get());
-        }
-        st.pop();
-    }
-    return post;
-}
-int convert(char count) {
-    int i = 0;
-    if (count >= '0' && count <= '9') {
-        for (char k = '0'; k <= '9'; k++, i++) {
-            if (count == k)
-                return i;
-        }
-    }
-    return -1;
+     }
+  }
+  while (!sta.isEmpty()) {
+    res.push_back(sta.get());
+    res.push_back(' ');
+    sta.pop();
+  }
+  res.pop_back();
+  return res;
 }
 int eval(std::string pref) {
-    TStack<int, 100> st2;
-    int oper = 0;
-  for (int l = 0; l < pref.size(); l++) {
-       if (convert(pref[l]) > -1) {
-            oper = oper * 10 + convert(pref[l]);;
-        } else {
-            if (oper != 0) {
-                st2.push(oper);
-                oper = 0;
-            }
-            switch (pref[l]) {
-            case '+':
-            {
-                int op1 = st2.get();
-                st2.pop();
-                int op2 = st2.get();
-                st2.pop();
-                st2.push(op1 + op2);
-                break;
-            }
-            case '-':
-            {
-                int op1 = st2.get();
-                st2.pop();
-                int op2 = stack2.get();
-                int op2 = st2.get();
-                st2.pop();
-                st2.push(op2 - op1);
-                break;
-            }
-            case '*':
-            {
-                int op1 = st2.get();
-                st2.pop();
-                int op2 = st2.get();
-                st2.pop();
-                st2.push(op1 * op2);
-                break;
-            }
-            case '/':
-            {
-                int op1 = st2.get();
-                st2.pop();
-                int op2 = st2.get();
-                st2.pop();
-                st2.push(op2 / op1);
-                break;
-            }
-            }
-        }
+  TStack <int, 100> stack2;
+  int res = 0, x, y;
+  for (int i = 0; i < pref.length(); i++) {
+    if (pr(pref[i]) == 5) {
+      stack2.push(pref[i]-'0');
+    } else if (pr(pref[i]) < 4) {
+      y = stack2.get();
+      stack2.pop();
+      x = stack2.get();
+      stack2.pop();
+      stack2.push(culcul(pref[i], x, y)); 
     }
-    return st2.get();
+  }
+  res = stack2.get();
+  return res;
 }
