@@ -4,7 +4,7 @@
 template<typename T, int size>
 class TStack {
  private:
-Type arr[100];
+T arr[100];
 int top;
  public:
 TStack() : top(-1) {
@@ -15,14 +15,14 @@ return top == - 1;
 bool isFull() const {
 return size == size - 1;
 }
-Type get() {
+T get() {
 return arr[top];
 }
 void pop() {
 if (top >= 0)
 top--;
 }
-void push(Type value) {
+void push(T value) {
 if (top < size - 1)
 arr[++top] = value;
 }
