@@ -3,12 +3,10 @@
 #define INCLUDE_TSTACK_H_
 template<typename T, int size>
 class TStack {
-
-private:
+ private:
 Type arr[100];
 int top;
-
-public:
+ public:
 TStack() : top(-1) {
 }
 bool isEmpty() const {
